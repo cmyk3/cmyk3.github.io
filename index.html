@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMYK3</title>
+    <style>
+        :root {
+            --primary: #dc18cc;
+            --primary-hover: #bf00af;
+            --background: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            margin: 2rem auto;
+            
+        }
+
+        .card {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+            margin: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            text-align: center;
+            color: var(--text);
+        }
+
+        .description {
+            text-align: left;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: normal;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+
+        button.secondary {
+            border: solid 1em var(--primary);
+            background-color: var(--background);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .button-secondary {
+            background: none;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .button-secondary:hover {
+            background: #e7e7e7;
+            color: var(--primary);
+        }
+
+        #results {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        #results.show {
+            display: block;
+        }
+
+        .prompt-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .prompt-item {
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .prompt-item:hover {
+            background-color: #f1f5f9;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .circle {
+            width: 1.5em;
+            height: 1.5em;
+            background-color: #dc18cc;
+            border-radius: 50%;
+        }
+
+        .timer-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .timer-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .timer-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            position: relative;
+            min-width: 300px;
+        }
+
+        .timer-display {
+            font-size: 4rem;
+            font-weight: bold;
+            font-variant-numeric: tabular-nums;
+            margin: 1rem 0;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            width: auto;
+        }
+
+        .timer-flash {
+            animation: flash 0.5s ease-in-out 3;
+        }
+
+        @keyframes flash {
+            0%, 100% { color: inherit; }
+            50% { color: var(--primary); }
+        }
+
+    .fab {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background-color: var(--primary);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.2s;
+        z-index: 100;
+    }
+
+    .fab:hover {
+        transform: scale(1.1);
+        background-color: var(--primary-hover);
+    }
+
+    .fab svg {
+        width: 24px;
+        height: 24px;
+        color: white;
+    }
+
+    .timer-menu {
+        position: fixed;
+        bottom: 5rem;
+        right: 2rem;
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        opacity: 0;
+        transform: translateY(1rem);
+        pointer-events: none;
+        transition: all 0.2s ease-out;
+        z-index: 99;
+    }
+
+    .timer-menu.show {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .timer-menu h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+    }
+
+    .timer-menu-items {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .timer-menu-item {
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        text-align: left;
+        border: none;
+        background: none;
+        width: 100%;
+        color: black;
+
+    }
+
+    .timer-menu-item:hover {
+        background-color: #e7e7e7;
+    }
+
+    .header {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #111111;
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    }
+
+    .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-left: 32px;
+    gap: 32px;
+
+    }
+
+    .nav-container {
+    list-style: none;
+    display: flex;
+    padding-left: 32px;
+    padding-right: 32px;
+    justify-content: flex-end;
+    font-size: 1em;
+    margin: 0;
+    gap: 48px;
+    }
+
+    ul {
+    list-style: none;
+    }
+
+    a {
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+
+    }
+
+    a:hover{
+    color: var(--primary);
+    transition: all 0.3s ease;
+    }
+
+    .head-list-item {
+    font-size: 1.5em;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    }
+
+    .head-list-item:hover {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: white;
+    }
+
+    </style>
+</head>
+<body>
+    <div style="width: 100%; background-color: rgb(26, 26, 26); margin: 0; padding: 0; display: flex; justify-content: center;">
+    <header class="header" style="background-color: rgb(26, 26, 26);">
+        <div class="header-content">
+            <div class="head-list-item"><a href="">CMYK3</a></div>
+        </div>
+        <ul class="nav-container">
+            <li class="list-item"><a href="">Generate</a></li>
+            <li class="list-item"><a href="gallery.html">Gallery</a></li>
+        </ul>
+    </header></div>
+
+    <div class="container">
+        <div class="header-container" style="display: flex; flex-direction: column;">
+            <div style="display: flex; flex-direction: row; align-items: center; gap: 8px;"><div class="circle"></div>
+            <h1>CMYK3</h1></div>
+            <p class="description" style="margin:0;">Generate inspiration for some quick doodles.</p>
+
+        </div>
+
+        <div class="card">
+            
+            <div class="form-group">
+                <label for="wordCount">Number of words:</label>
+                <select id="wordCount">
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label>Alliteration:</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="alliteration" value="yes">
+                        Yes
+                    </label>
+                    <label>
+                        <input type="radio" name="alliteration" value="no" checked>
+                        No
+                    </label>
+                </div>
+            </div>
+    
+            <button onclick="generatePrompts()">Generate</button>
+        </div>
+    
+        <div id="results" class="card">
+            <ul class="prompt-list" id="promptList"></ul>
+        </div>
+    </div>
+    
+    <!--FAB-->
+    <div class="fab" onclick="toggleTimerMenu()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+        </svg>
+    </div>
+    
+    <!--timer menu overlay-->
+    <div class="timer-menu" id="timerMenu">
+        <h3>Start timer</h3>
+        <div class="timer-menu-items">
+            <button class="timer-menu-item" onclick="startTimerWithDuration(60)">1 minute</button>
+            <button class="timer-menu-item" onclick="startTimerWithDuration(120)">2 minutes</button>
+            <button class="timer-menu-item" onclick="startTimerWithDuration(180)">3 minutes</button>
+            <button class="timer-menu-item" onclick="startTimerWithDuration(300)">5 minutes</button>
+            <button class="timer-menu-item" onclick="startTimerWithDuration(600)">10 minutes</button>
+        </div>
+    </div>
+    
+    <!--timer modal-->
+    <div class="timer-overlay" id="timerOverlay">
+        <div class="timer-container">
+            <button class="close-button" onclick="closeTimer()">✕</button>
+            <h2>Time remaining</h2>
+            <div class="timer-display" id="timerDisplay">3:00</div>
+            <div class="timer-controls">
+                <button class="button-secondary" onclick="toggleTimer()">Pause</button>
+                <button onclick="closeTimer()">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const adjectives = [
+            { word: 'abysmal', category: 'dark' },
+            { word: 'aerial', category: 'nature' },
+            { word: 'ancient', category: 'mystical' },
+            { word: 'alien', category: 'elemental' },
+            { word: 'arcane', category: 'mystical' },
+            { word: 'astral', category: 'cosmic' },
+            { word: 'blazing', category: 'elemental' },
+            { word: 'boundless', category: 'cosmic' },
+            { word: 'brilliant', category: 'light' },
+            { word: 'celestial', category: 'cosmic' },
+            { word: 'chaotic', category: 'dark' },
+            { word: 'colossal', category: 'mighty' },
+            { word: 'cosmic', category: 'cosmic' },
+            { word: 'crystalline', category: 'elemental' },
+            { word: 'cursed', category: 'dark' },
+            { word: 'dancing', category: 'whimsical' },
+            { word: 'dazzling', category: 'light' },
+            { word: 'deepwater', category: 'nature' },
+            { word: 'delicate', category: 'whimsical' },
+            { word: 'divine', category: 'mystical' },
+            { word: 'dreaming', category: 'whimsical' },
+            { word: 'drifting', category: 'nature' },
+            { word: 'eccentric', category: 'whimsical' },
+            { word: 'echoing', category: 'mystical' },
+            { word: 'electric', category: 'elemental' },
+            { word: 'elegant', category: 'whimsical' },
+            { word: 'enchanted', category: 'mystical' },
+            { word: 'ethereal', category: 'mystical' },
+            { word: 'eternal', category: 'cosmic' },
+            { word: 'explosive', category: 'mighty' },
+            { word: 'fabled', category: 'mystical' },
+            { word: 'fallen', category: 'dark' },
+            { word: 'ferocious', category: 'mighty' },
+            { word: 'fiery', category: 'elemental' },
+            { word: 'floating', category: 'whimsical' },
+            { word: 'flowing', category: 'nature' },
+            { word: 'fluorescent', category: 'light' },
+            { word: 'flying', category: 'nature' },
+            { word: 'forbidden', category: 'dark' },
+            { word: 'frozen', category: 'elemental' },
+            { word: 'ghastly', category: 'dark' },
+            { word: 'gigantic', category: 'mighty' },
+            { word: 'glacial', category: 'elemental' },
+            { word: 'glowing', category: 'light' },
+            { word: 'graceful', category: 'whimsical' },
+            { word: 'haunted', category: 'dark' },
+            { word: 'heavenly', category: 'cosmic' },
+            { word: 'hidden', category: 'mystical' },
+            { word: 'hollow', category: 'dark' },
+            { word: 'hovering', category: 'whimsical' },
+            { word: 'howling', category: 'nature' },
+            { word: 'hypnotic', category: 'mystical' },
+            { word: 'icy', category: 'elemental' },
+            { word: 'illuminated', category: 'light' },
+            { word: 'imperial', category: 'mighty' },
+            { word: 'infinite', category: 'cosmic' },
+            { word: 'interstellar', category: 'cosmic' },
+            { word: 'legendary', category: 'mystical' },
+            { word: 'levitating', category: 'whimsical' },
+            { word: 'lightning', category: 'elemental' },
+            { word: 'luminous', category: 'light' },
+            { word: 'lunar', category: 'cosmic' },
+            { word: 'magical', category: 'mystical' },
+            { word: 'majestic', category: 'mighty' },
+            { word: 'mechanical', category: 'mighty' },
+            { word: 'melodic', category: 'whimsical' },
+            { word: 'metallic', category: 'elemental' },
+            { word: 'mighty', category: 'mighty' },
+            { word: 'misty', category: 'nature' },
+            { word: 'molten', category: 'elemental' },
+            { word: 'moonlit', category: 'cosmic' },
+            { word: 'morphing', category: 'whimsical' },
+            { word: 'mysterious', category: 'mystical' },
+            { word: 'mystical', category: 'mystical' },
+            { word: 'neon', category: 'light' },
+            { word: 'nocturnal', category: 'dark' },
+            { word: 'northern', category: 'nature' },
+            { word: 'oceanic', category: 'nature' },
+            { word: 'otherworldly', category: 'cosmic' },
+            { word: 'peculiar', category: 'whimsical' },
+            { word: 'phantasmal', category: 'dark' },
+            { word: 'phosphorescent', category: 'light' },
+            { word: 'prismatic', category: 'light' },
+            { word: 'radiant', category: 'light' },
+            { word: 'raging', category: 'mighty' },
+            { word: 'resonating', category: 'mystical' },
+            { word: 'roaring', category: 'mighty' },
+            { word: 'sacred', category: 'mystical' },
+            { word: 'savage', category: 'mighty' },
+            { word: 'scorching', category: 'elemental' },
+            { word: 'shadowy', category: 'dark' },
+            { word: 'shimmering', category: 'light' },
+            { word: 'shining', category: 'light' },
+            { word: 'silent', category: 'mystical' },
+            { word: 'silver', category: 'light' },
+            { word: 'skeletal', category: 'dark' },
+            { word: 'sleeping', category: 'whimsical' },
+            { word: 'solar', category: 'cosmic' },
+            { word: 'spectral', category: 'dark' },
+            { word: 'spinning', category: 'whimsical' },
+            { word: 'spiraling', category: 'whimsical' },
+            { word: 'spiritual', category: 'mystical' },
+            { word: 'splendid', category: 'light' },
+            { word: 'stellar', category: 'cosmic' },
+            { word: 'stormy', category: 'nature' },
+            { word: 'strange', category: 'whimsical' },
+            { word: 'sublime', category: 'mystical' },
+            { word: 'submerged', category: 'nature' },
+            { word: 'sunken', category: 'dark' },
+            { word: 'supernatural', category: 'mystical' },
+            { word: 'surreal', category: 'whimsical' },
+            { word: 'swift', category: 'mighty' },
+            { word: 'temporary', category: 'whimsical' },
+            { word: 'thundering', category: 'mighty' },
+            { word: 'titanic', category: 'mighty' },
+            { word: 'transcendent', category: 'mystical' },
+            { word: 'twilight', category: 'dark' },
+            { word: 'twisted', category: 'dark' },
+            { word: 'undying', category: 'mystical' },
+            { word: 'unearthly', category: 'cosmic' },
+            { word: 'unstoppable', category: 'mighty' },
+            { word: 'venomous', category: 'dark' },
+            { word: 'vibrant', category: 'light' },
+            { word: 'volcanic', category: 'elemental' },
+            { word: 'wandering', category: 'whimsical' },
+            { word: 'wild', category: 'nature' },
+            { word: 'windswept', category: 'nature' },
+            { word: 'winged', category: 'nature' },
+            { word: 'winter', category: 'nature' },
+            { word: 'wise', category: 'mystical' },
+            { word: 'wooden', category: 'nature' },
+            { word: 'zealous', category: 'mighty' },
+            
+            //less eccentric 5th grade level stuff
+            { word: 'happy', category: 'whimsical' },
+            { word: 'sad', category: 'dark' },
+            { word: 'angry', category: 'mighty' },
+            { word: 'silly', category: 'whimsical' },
+            { word: 'tired', category: 'dark' },
+            { word: 'excited', category: 'whimsical' },
+            { word: 'scared', category: 'dark' },
+            { word: 'brave', category: 'mighty' },
+            { word: 'friendly', category: 'whimsical' },
+            { word: 'quiet', category: 'mystical' },
+            { word: 'loud', category: 'mighty' },
+            { word: 'fast', category: 'mighty' },
+            { word: 'slow', category: 'nature' },
+            { word: 'strong', category: 'mighty' },
+            { word: 'weak', category: 'dark' },
+            { word: 'smart', category: 'mystical' },
+            { word: 'funny', category: 'whimsical' },
+            { word: 'kind', category: 'light' },
+            { word: 'mean', category: 'dark' },
+            { word: 'young', category: 'whimsical' },
+            { word: 'old', category: 'mystical' },
+            { word: 'new', category: 'light' },
+            { word: 'big', category: 'mighty' },
+            { word: 'small', category: 'whimsical' },
+            { word: 'tall', category: 'mighty' },
+            { word: 'short', category: 'whimsical' },
+            { word: 'hot', category: 'elemental' },
+            { word: 'cold', category: 'elemental' },
+            { word: 'wet', category: 'nature' },
+            { word: 'dry', category: 'nature' },
+            { word: 'clean', category: 'light' },
+            { word: 'dirty', category: 'dark' },
+            { word: 'easy', category: 'whimsical' },
+            { word: 'hard', category: 'mighty' },
+            { word: 'early', category: 'light' },
+            { word: 'late', category: 'dark' },
+            { word: 'good', category: 'light' },
+            { word: 'bad', category: 'dark' },
+            { word: 'right', category: 'light' },
+            { word: 'wrong', category: 'dark' },
+            { word: 'sweet', category: 'whimsical' },
+            { word: 'sour', category: 'dark' },
+            { word: 'rich', category: 'mighty' },
+            { word: 'poor', category: 'dark' },
+            { word: 'thick', category: 'mighty' },
+            { word: 'thin', category: 'whimsical' },
+            { word: 'wide', category: 'mighty' },
+            { word: 'narrow', category: 'whimsical' },
+            { word: 'deep', category: 'mystical' },
+            { word: 'shallow', category: 'nature' }
+        ];
+
+        const nouns = [
+            { word: 'abyss', category: 'dark' },
+            { word: 'alchemist', category: 'mystical' },
+            { word: 'angel', category: 'mystical' },
+            { word: 'asteroid', category: 'cosmic' },
+            { word: 'aurora', category: 'cosmic' },
+            { word: 'avalanche', category: 'nature' },
+            { word: 'banshee', category: 'dark' },
+            { word: 'beacon', category: 'light' },
+            { word: 'behemoth', category: 'mighty' },
+            { word: 'blade', category: 'mighty' },
+            { word: 'blizzard', category: 'elemental' },
+            { word: 'blossom', category: 'nature' },
+            { word: 'butterfly', category: 'nature' },
+            { word: 'canyon', category: 'nature' },
+            { word: 'cascade', category: 'nature' },
+            { word: 'cathedral', category: 'mystical' },
+            { word: 'cavern', category: 'nature' },
+            { word: 'centaur', category: 'mystical' },
+            { word: 'chalice', category: 'mystical' },
+            { word: 'chimera', category: 'mystical' },
+            { word: 'citadel', category: 'mighty' },
+            { word: 'comet', category: 'cosmic' },
+            { word: 'crystal', category: 'elemental' },
+            { word: 'cyclone', category: 'nature' },
+            { word: 'demon', category: 'dark' },
+            { word: 'dragon', category: 'mystical' },
+            { word: 'eclipse', category: 'cosmic' },
+            { word: 'ember', category: 'elemental' },
+            { word: 'fairy', category: 'whimsical' },
+            { word: 'falcon', category: 'nature' },
+            { word: 'firefly', category: 'nature' },
+            { word: 'fortress', category: 'mighty' },
+            { word: 'galaxy', category: 'cosmic' },
+            { word: 'gargoyle', category: 'dark' },
+            { word: 'geode', category: 'nature' },
+            { word: 'ghost', category: 'dark' },
+            { word: 'giant', category: 'mighty' },
+            { word: 'glacier', category: 'nature' },
+            { word: 'golem', category: 'mystical' },
+            { word: 'griffin', category: 'mystical' },
+            { word: 'guardian', category: 'mystical' },
+            { word: 'harbinger', category: 'dark' },
+            { word: 'horizon', category: 'nature' },
+            { word: 'hurricane', category: 'nature' },
+            { word: 'inferno', category: 'elemental' },
+            { word: 'island', category: 'nature' },
+            { word: 'kraken', category: 'mystical' },
+            { word: 'labyrinth', category: 'mystical' },
+            { word: 'lightning', category: 'elemental' },
+            { word: 'lotus', category: 'nature' },
+            { word: 'mammoth', category: 'mighty' },
+            { word: 'meteor', category: 'cosmic' },
+            { word: 'minotaur', category: 'mystical' },
+            { word: 'mirror', category: 'mystical' },
+            { word: 'mist', category: 'nature' },
+            { word: 'moon', category: 'cosmic' },
+            { word: 'mountain', category: 'nature' },
+            { word: 'phantom', category: 'dark' },
+            { word: 'phoenix', category: 'mystical' },
+            { word: 'planet', category: 'cosmic' },
+            { word: 'portal', category: 'mystical' },
+            { word: 'prism', category: 'light' },
+            { word: 'pyramid', category: 'mystical' },
+            { word: 'rainbow', category: 'nature' },
+            { word: 'river', category: 'nature' },
+            { word: 'ruin', category: 'dark' },
+            { word: 'salamander', category: 'mystical' },
+            { word: 'satellite', category: 'cosmic' },
+            { word: 'serpent', category: 'mystical' },
+            { word: 'shadow', category: 'dark' },
+            { word: 'siren', category: 'mystical' },
+            { word: 'skeleton', category: 'dark' },
+            { word: 'spirit', category: 'mystical' },
+            { word: 'star', category: 'cosmic' },
+            { word: 'storm', category: 'nature' },
+            { word: 'sun', category: 'cosmic' },
+            { word: 'temple', category: 'mystical' },
+            { word: 'throne', category: 'mighty' },
+            { word: 'thunder', category: 'nature' },
+            { word: 'titan', category: 'mighty' },
+            { word: 'tomb', category: 'dark' },
+            { word: 'tornado', category: 'nature' },
+            { word: 'tower', category: 'mighty' },
+            { word: 'tree', category: 'nature' },
+            { word: 'unicorn', category: 'mystical' },
+            { word: 'vampire', category: 'dark' },
+            { word: 'volcano', category: 'nature' },
+            { word: 'vortex', category: 'cosmic' },
+            { word: 'warrior', category: 'mighty' },
+            { word: 'waterfall', category: 'nature' },
+            { word: 'werewolf', category: 'dark' },
+            { word: 'whirlpool', category: 'nature' },
+            { word: 'witch', category: 'mystical' },
+            { word: 'wizard', category: 'mystical' },
+            { word: 'worm', category: 'mystical' },
+            { word: 'zombie', category: 'dark' },
+            
+            //less eccentric 5th grade level stuff
+            { word: 'dog', category: 'nature' },
+            { word: 'cat', category: 'nature' },
+            { word: 'bird', category: 'nature' },
+            { word: 'fish', category: 'nature' },
+            { word: 'rabbit', category: 'nature' },
+            { word: 'horse', category: 'nature' },
+            { word: 'cow', category: 'nature' },
+            { word: 'pig', category: 'nature' },
+            { word: 'sheep', category: 'nature' },
+            { word: 'goat', category: 'nature' },
+            { word: 'chicken', category: 'nature' },
+            { word: 'duck', category: 'nature' },
+            { word: 'mouse', category: 'nature' },
+            { word: 'rat', category: 'nature' },
+            { word: 'hamster', category: 'nature' },
+            { word: 'turtle', category: 'nature' },
+            { word: 'snake', category: 'nature' },
+            { word: 'lizard', category: 'nature' },
+            { word: 'frog', category: 'nature' },
+            { word: 'toad', category: 'nature' },
+            { word: 'elephant', category: 'nature' },
+            { word: 'lion', category: 'nature' },
+            { word: 'tiger', category: 'nature' },
+            { word: 'bear', category: 'nature' },
+            { word: 'wolf', category: 'nature' },
+            { word: 'fox', category: 'nature' },
+            { word: 'deer', category: 'nature' },
+            { word: 'monkey', category: 'nature' },
+            { word: 'gorilla', category: 'nature' },
+            { word: 'zebra', category: 'nature' },
+            { word: 'giraffe', category: 'nature' },
+            { word: 'penguin', category: 'nature' },
+            { word: 'dolphin', category: 'nature' },
+            { word: 'whale', category: 'nature' },
+            { word: 'shark', category: 'nature' },
+            { word: 'octopus', category: 'nature' },
+            { word: 'crab', category: 'nature' },
+            { word: 'lobster', category: 'nature' },
+            { word: 'bee', category: 'nature' },
+            { word: 'ant', category: 'nature' },
+            { word: 'spider', category: 'nature' },
+            { word: 'beetle', category: 'nature' },
+            { word: 'butterfly', category: 'nature' },
+            { word: 'moth', category: 'nature' },
+            { word: 'dragonfly', category: 'nature' },
+            { word: 'eagle', category: 'nature' },
+            { word: 'hawk', category: 'nature' },
+            { word: 'owl', category: 'nature' },
+            { word: 'parrot', category: 'nature' },
+            { word: 'peacock', category: 'nature' },
+            
+            //common nouns that aren't animals
+            { word: 'tree', category: 'nature' },
+            { word: 'flower', category: 'nature' },
+            { word: 'grass', category: 'nature' },
+            { word: 'rock', category: 'nature' },
+            { word: 'mountain', category: 'nature' },
+            { word: 'river', category: 'nature' },
+            { word: 'ocean', category: 'nature' },
+            { word: 'lake', category: 'nature' },
+            { word: 'beach', category: 'nature' },
+            { word: 'forest', category: 'nature' },
+            { word: 'desert', category: 'nature' },
+            { word: 'island', category: 'nature' },
+            { word: 'sun', category: 'cosmic' },
+            { word: 'moon', category: 'cosmic' },
+            { word: 'star', category: 'cosmic' },
+            { word: 'cloud', category: 'nature' },
+            { word: 'rain', category: 'nature' },
+            { word: 'snow', category: 'nature' },
+            { word: 'wind', category: 'nature' },
+            { word: 'storm', category: 'nature' },
+            { word: 'house', category: 'mighty' },
+            { word: 'building', category: 'mighty' },
+            { word: 'road', category: 'mighty' },
+            { word: 'bridge', category: 'mighty' },
+            { word: 'car', category: 'mighty' },
+            { word: 'boat', category: 'mighty' },
+            { word: 'plane', category: 'mighty' },
+            { word: 'train', category: 'mighty' },
+            { word: 'book', category: 'mystical' },
+            { word: 'pen', category: 'whimsical' },
+            { word: 'pencil', category: 'whimsical' },
+            { word: 'paper', category: 'whimsical' },
+            { word: 'phone', category: 'mighty' },
+            { word: 'computer', category: 'mighty' },
+            { word: 'television', category: 'mighty' },
+            { word: 'radio', category: 'mighty' },
+            { word: 'clock', category: 'mystical' },
+            { word: 'chair', category: 'whimsical' },
+            { word: 'table', category: 'whimsical' },
+            { word: 'bed', category: 'whimsical' },
+            { word: 'door', category: 'mystical' },
+            { word: 'window', category: 'light' },
+            { word: 'wall', category: 'mighty' },
+            { word: 'floor', category: 'mighty' },
+            { word: 'ceiling', category: 'mighty' },
+            { word: 'roof', category: 'mighty' },
+            { word: 'garden', category: 'nature' },
+            { word: 'park', category: 'nature' },
+            { word: 'school', category: 'mighty' },
+            { word: 'hospital', category: 'mighty' },
+            { word: 'store', category: 'whimsical' },
+            { word: 'restaurant', category: 'whimsical' }
+        ];
+
+        const categoryEmojis = {
+            mystical: ['🔮', '✨', '🌟'],
+            dark: ['👻', '🌑', '🦇'],
+            cosmic: ['🌌', '🌠', '🚀'],
+            nature: ['🌳', '🌊', '🏔️'],
+            elemental: ['🔥', '💨', '⚡'],
+            mighty: ['💪', '👑', '⚔️'],
+            whimsical: ['🎭', '🎪', '🎨'],
+            light: ['💫', '✨', '⭐']
+        };
+
+        function getRelevantEmoji(words) {
+            const categories = new Set();
+            words.forEach(word => {
+                const adjMatch = adjectives.find(adj => adj.word === word);
+                const nounMatch = nouns.find(noun => noun.word === word);
+                
+                if (adjMatch) categories.add(adjMatch.category);
+                if (nounMatch) categories.add(nounMatch.category);
+            });
+
+            const categoryArray = Array.from(categories);
+            if (categoryArray.length === 0) return '✨';
+
+            const randomCategory = categoryArray[Math.floor(Math.random() * categoryArray.length)];
+            const emojiList = categoryEmojis[randomCategory];
+            return emojiList[Math.floor(Math.random() * emojiList.length)];
+        }
+
+        function getRandomItem(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        function generateWordSet(count, usedWords) {
+            const words = [];
+            
+            let adjCount = Math.ceil(count / 2);
+            let nounCount = Math.floor(count / 2);
+            
+            while (words.length < adjCount) {
+                const adj = getRandomItem(adjectives);
+                if (!usedWords.has(adj.word)) {
+                    words.push(adj.word);
+                    usedWords.add(adj.word);
+                }
+            }
+            
+            while (words.length < count) {
+                const noun = getRandomItem(nouns);
+                if (!usedWords.has(noun.word)) {
+                    words.push(noun.word);
+                    usedWords.add(noun.word);
+                }
+            }
+            
+            return words;
+        }
+
+        function generateAlliterationSet(count, usedWords) {
+            const words = [];
+            let attempts = 0;
+            
+            while (words.length < count && attempts < 50) {
+                attempts++;
+                
+                const adj = getRandomItem(adjectives);
+                if (usedWords.has(adj.word)) continue;
+                
+                const letter = adj.word[0].toLowerCase();
+                const matchingNouns = nouns.filter(n => 
+                    n.word[0].toLowerCase() === letter && !usedWords.has(n.word)
+                );
+                
+                if (matchingNouns.length > 0) {
+                    words.push(adj.word);
+                    usedWords.add(adj.word);
+                    
+                    const noun = getRandomItem(matchingNouns);
+                    words.push(noun.word);
+                    usedWords.add(noun.word);
+                    
+                    while (words.length < count) {
+                        const additionalAdj = adjectives.find(a => 
+                            a.word[0].toLowerCase() === letter && !usedWords.has(a.word)
+                        );
+                        if (additionalAdj) {
+                            words.push(additionalAdj.word);
+                            usedWords.add(additionalAdj.word);
+                        } else {
+                            break;
+                        }
+                    }
+                    
+                    if (words.length === count) {
+                        return words;
+                    }
+                }
+            }
+            
+            return generateWordSet(count, usedWords);
+        }
+
+        function generatePrompts() {
+            const wordCount = parseInt(document.getElementById('wordCount').value);
+            const useAlliteration = document.querySelector('input[name="alliteration"]:checked').value === 'yes';
+            const promptList = document.getElementById('promptList');
+            const results = document.getElementById('results');
+            
+            const usedWords = new Set();
+            const usedPrompts = new Set();
+
+            promptList.innerHTML = '';
+            results.classList.add('show');
+
+            let attempts = 0;
+            while (usedPrompts.size < 5 && attempts < 20) {
+                attempts++;
+                
+                let words;
+                if (useAlliteration) {
+                    words = generateAlliterationSet(wordCount, usedWords);
+                } else {
+                    words = generateWordSet(wordCount, usedWords);
+                }
+                
+                const promptText = words.join(' ');
+                if (usedPrompts.has(promptText)) continue;
+                
+                const emoji = getRelevantEmoji(words);
+                usedPrompts.add(promptText);
+                
+                const li = document.createElement('li');
+                li.className = 'prompt-item';
+                li.textContent = `${emoji} ${promptText}`;
+                li.onclick = () => {
+                    navigator.clipboard.writeText(promptText).then(() => {
+                        const originalText = li.textContent;
+                        li.textContent = '✅ Copied to clipboard!';
+                        setTimeout(() => {
+                            li.textContent = originalText;
+                        }, 1500);
+                    });
+                };
+                promptList.appendChild(li);
+            }
+        }
+        </script>
+
+    <script>
+
+        let timerInterval;
+        let timeLeft = 180;
+        let isPaused = false;
+    
+        function toggleTimerMenu() {
+            const menu = document.getElementById('timerMenu');
+            menu.classList.toggle('show');
+        }
+    
+        function startTimerWithDuration(duration) {
+            timeLeft = duration;
+            isPaused = false;
+            updateTimerDisplay();
+            document.getElementById('timerOverlay').classList.add('show');
+            document.getElementById('timerMenu').classList.remove('show');
+            document.querySelector('.timer-display').classList.remove('timer-flash');
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+    
+        function updateTimer() {
+            if (isPaused) return;
+            
+            timeLeft--;
+            updateTimerDisplay();
+    
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                document.querySelector('.timer-display').classList.add('timer-flash');
+                setTimeout(() => {
+                    closeTimer();
+                }, 1500);
+            }
+        }
+    
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+    
+        function toggleTimer() {
+            isPaused = !isPaused;
+            const button = document.querySelector('.timer-controls button:first-of-type');
+            button.textContent = isPaused ? 'Resume' : 'Pause';
+        }
+    
+        function closeTimer() {
+            clearInterval(timerInterval);
+            document.getElementById('timerOverlay').classList.remove('show');
+        }
+    
+        // dismiss timer menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('timerMenu');
+            const fab = document.querySelector('.fab');
+            if (!menu.contains(e.target) && !fab.contains(e.target)) {
+                menu.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
